@@ -119,15 +119,18 @@ async def process_file(message, status_msg):
         await status_msg.edit_text(f"✅ **Successfully Uploaded!**\n**File Name:** `{filename}`\n**Drive File ID:** `{file_id}`")
 
     except Exception as e:
-        # Capture full traceback and send it to the user
+        # Capture full traceback
         error_trace = traceback.format_exc()
-        error_text = f"❌ **An Error Occurred:**\n\n`{str(e)}`\n\n**Traceback:**\n```python\n{error_trace[-3500:]}\n```"
         
-        # Telegram messages have a 4096 char limit, trimming traceback to fit
+        # Replace backticks in the traceback to prevent breaking Telegram's markdown
+        safe_trace = error_trace[-3500:].replace("`", "'")
+        error_text = f"❌ **An Error Occurred:**\n\n`{str(e)}`\n\n**Traceback:**\n```python\n{safe_trace}\n```"
+        
         try:
             await status_msg.edit_text(error_text)
-        except:
-            await message.reply_text(error_text)
+        except Exception:
+            # Absolute fallback if markdown still fails for any reason
+            await message.reply_text("❌ **An upload error occurred.**\nThe error message contained invalid markdown, so it couldn't be sent here. Please check the Docker logs for the full traceback.")
             
     finally:
         # 4. STRICT CLEANUP: Guarantee file deletion to respect the 8GB limit
