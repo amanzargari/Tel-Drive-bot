@@ -122,6 +122,11 @@ async def process_file(message, status_msg):
         # Capture full traceback
         error_trace = traceback.format_exc()
         
+        # ---> ADD THESE 3 LINES to print to Docker logs <---
+        print("=== UPLOAD ERROR ===")
+        print(error_trace)
+        print("====================")
+        
         # Replace backticks in the traceback to prevent breaking Telegram's markdown
         safe_trace = error_trace[-3500:].replace("`", "'")
         error_text = f"❌ **An Error Occurred:**\n\n`{str(e)}`\n\n**Traceback:**\n```python\n{safe_trace}\n```"
