@@ -1,0 +1,11 @@
+# Ignore Google Drive credentials
+service_account.json
+
+# Ignore Pyrogram session files
+*.session
+*.session-journal
+
+# Ignore Python cache and virtual environments
+__pycache__/
+venv/
+.env

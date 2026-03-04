@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  gdrive-bot:
+    build: .
+    container_name: telegram_gdrive_bot
+    restart: unless-stopped
+    env_file:
+      - .env  # Tells Docker to load variables from this file
+    volumes:
+      - ./service_account.json:/app/service_account.json:ro
+      - ./gdrive_bot.session:/app/gdrive_bot.session
+    environment:
+      - PYTHONUNBUFFERED=1
