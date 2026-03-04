@@ -7,6 +7,8 @@ from pyrogram.errors import MessageNotModified
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
 from dotenv import load_dotenv
 
 # Load variables from the .env file
@@ -31,7 +33,21 @@ app = Client("gdrive_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN
 
 # Initialize Google Drive Service
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
-creds = service_account.Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
+creds = None
+
+# Load the token.json file we generated locally
+if os.path.exists('token.json'):
+    creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+
+# If the token is expired, refresh it automatically and save it
+if not creds or not creds.valid:
+    if creds and creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+    else:
+        raise Exception("token.json is missing or invalid! Please run auth.py locally and copy the token.json file to the server.")
+
 drive_service = build('drive', 'v3', credentials=creds)
 
 # Queue for processing files one by one to save server storage

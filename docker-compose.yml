@@ -8,6 +8,7 @@ services:
     env_file:
       - .env  # Tells Docker to load variables from this file
     volumes:
-      - ./service_account.json:/app/service_account.json:ro
+      #- ./service_account.json:/app/service_account.json:ro
+      - ./token.json:/app/token.json
     environment:
       - PYTHONUNBUFFERED=1
