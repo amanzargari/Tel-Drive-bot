@@ -9,6 +9,5 @@ services:
       - .env  # Tells Docker to load variables from this file
     volumes:
       - ./service_account.json:/app/service_account.json:ro
-      - ./gdrive_bot.session:/app/gdrive_bot.session
     environment:
       - PYTHONUNBUFFERED=1
